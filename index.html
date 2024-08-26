@@ -3,22 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Personal Website</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="styles.css">
+    <title>Narimene Birthday 27|08|24</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #FFFFFF;
+        }
+
+        .fullscreen-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #000;
+            cursor: pointer;
+        }
+
+        .gif-container {
+            width: 100%;
+            height: 100%;
+            max-width: 1366px;
+            max-height: 768px;
+            position: relative;
+        }
+
+        .centered-gif {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .dot-navigation {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            border: 2px solid white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .dot.active {
+            background-color: white;
+        }
+
+        /* Adventure Time color palette */
+        .audio-page {
+            background-color: #F9D5E5; /* Light pink */
+            color: #1E1E1E; /* Dark gray */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            font-family: 'Dancing Script', cursive;
+        }
+
+        .audio-title {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #FF75A0; /* Bright pink */
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .audio-player {
+            width: 80%;
+            max-width: 500px;
+        }
+
+        audio {
+            width: 100%;
+        }
+
+        @media (max-width: 1366px) {
+            .gif-container {
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        @media (max-width: 768px) and (orientation: portrait) {
+            .gif-container {
+                width: 100%;
+                height: 100%;
+            }
+            .centered-gif {
+                object-fit: contain;
+            }
+            .dot-navigation {
+                right: 10px;
+            }
+            .audio-title {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="fullscreen-container" onclick="toggleFullScreen()">
         <div class="gif-container">
-            <img id="gifImage" class="centered-gif" src="assets/Happy Birthday To My Princess Marceline_Bubblegum.gif" alt="Centered GIF">
-            <div class="dot-navigation">
-                <div class="dot active" onclick="changeGif(0)"></div>
-                <div class="dot" onclick="changeGif(1)"></div>
-            </div>
+            <img id="gifImage" class="centered-gif" src="assets/Happy Birthday To My Princess Marceline_Bubblegum.gif" alt="Birthday GIF">
+        </div>
+        <div class="dot-navigation">
+            <div class="dot active" onclick="changeGif(0)"></div>
+            <div class="dot" onclick="changeGif(1)"></div>
+            <div class="dot" onclick="changeGif(2)"></div>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        const gifs = [
+            "assets/Happy Birthday To My Princess Marceline_Bubblegum.gif",
+            "assets/Happy Birthday To My Princess Marceline_Bubblegum (1).gif",
+            null // Placeholder for audio page
+        ];
+
+        let currentGifIndex = 0;
+
+        function changeGif(index) {
+            currentGifIndex = index;
+            if (index === 2) {
+                showAudioPage();
+            } else {
+                document.getElementById('gifImage').src = gifs[index];
+                document.querySelector('.fullscreen-container').style.display = 'flex';
+                document.querySelector('.audio-page').style.display = 'none';
+            }
+            
+            // Update active dot
+            const dots = document.getElementsByClassName('dot');
+            for (let i = 0; i < dots.length; i++) {
+                dots[i].classList.remove('active');
+            }
+            dots[index].classList.add('active');
+        }
+
+        function showAudioPage() {
+            document.querySelector('.fullscreen-container').style.display = 'none';
+            document.querySelector('.audio-page').style.display = 'flex';
+        }
+
+        function nextGif() {
+            currentGifIndex = (currentGifIndex + 1) % gifs.length;
+            changeGif(currentGifIndex);
+        }
+
+        function previousGif() {
+            currentGifIndex = (currentGifIndex - 1 + gifs.length) % gifs.length;
+            changeGif(currentGifIndex);
+        }
+
+        // Auto-play GIFs
+        function autoPlayGifs() {
+            setInterval(nextGif, 5000); // Change GIF every 5 seconds
+        }
+
+        // Keyboard controls for navigating GIFs
+        function handleKeyDown(event) {
+            if (event.key === "ArrowUp") {
+                previousGif();
+            } else if (event.key === "ArrowDown") {
+                nextGif();
+            }
+        }
+
+        // Fullscreen toggle
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen mode: ${err.message}`);
+                });
+            }
+        }
+
+        // Start auto-play and listen for keyboard events when the page loads
+        window.onload = () => {
+            autoPlayGifs();
+            document.addEventListener('keydown', handleKeyDown);
+        };
+    </script>
+
+    <div class="audio-page" style="display: none;">
+        <h1 class="audio-title">Here is to Narimene Fatima Zohra</h1>
+        <div class="audio-player">
+            <audio controls>
+                <source src="assets/Birthday Song Narimene.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+    </div>
 </body>
 </html>
